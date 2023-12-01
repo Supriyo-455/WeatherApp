@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 10px;
+        }
+
+        .search-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .search-button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .listItem {
+            font-size: larger;
+            color: brown;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="search-container">
+        <input type="text" class="search-input" placeholder="Enter your search">
+        <button class="search-button" onclick="search()">Search</button>
+    </div>
+
+    <ul id="result"></ul>
+
+    <script>
+        function search() {
+            const input = document.querySelector('.search-input').value;
+            const cities = input.split(',');
+            console.log(cities);
+
+            const result = document.getElementById("result");
+
+            fetch("http://localhost:3000/getWeather", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ cities: cities })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    for (const city in data.weather) {
+                        const listItem = document.createElement("li");
+                        listItem.textContent = `${city}: ${data.weather[city]}`;
+                        listItem.className = "listItem";
+                        result.appendChild(listItem);
+                    }
+                })
+                .catch(err => alert(err.message));
+        }
+    </script>
+
+</body>
+
+</html>
